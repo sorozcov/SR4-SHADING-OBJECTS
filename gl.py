@@ -155,6 +155,52 @@ class Render(object):
                  file.write(self.pixels[x][y])
         file.close()
 
+    #Function to write zBuffer in file
+    def glFinishZbuffer(self,filename):
+        file = open(filename,'wb')
+        #https://itnext.io/bits-to-bitmaps-a-simple-walkthrough-of-bmp-image-format-765dc6857393
+        #Reference to construct BMP
+
+        #File Type Data BMP Header 14 Bytes
+        file.write(char('B'))
+        file.write(char('M'))
+        file.write(dword(14+40+self.width*self.height*3))
+        file.write(dword(0))
+        file.write(dword(14+40))
+
+        #File Image Header 40 Bytes
+        file.write(dword(40))
+        file.write(dword(self.width))
+        file.write(dword(self.height))
+        file.write(word(1))
+        file.write(word(24))
+        file.write(dword(0))
+        file.write(dword(self.width*self.height*3))
+        file.write(dword(0))
+        file.write(dword(0))
+        file.write(dword(0))
+        file.write(dword(0))
+
+
+        #We first calculate the min and the max depth in z in order to then write on the file
+        minZ=0
+        maxZ=0
+        for x in range(self.height):
+            for y in range(self.width):
+                depth =self.zbuffer[x][y]
+                if(depth!=-float('inf')):
+                    minZ= minZ if minZ<depth else depth
+                    maxZ= maxZ if maxZ>depth else depth
+
+        #Pixels 3 Bytes each
+        for x in range(self.height):
+            for y in range(self.width):
+                depth=self.zbuffer[x][y]
+                depth= depth if depth!=-float('inf') else minZ
+                #We normalize depth into a value from 0 to 1.
+                intensity=(depth-minZ)/(maxZ-minZ)
+                file.write(colorScale(intensity,intensity,intensity))
+        file.close()
 
     #Function for a line
     def glLine(self,x0,y0,x1,y1,color=None):

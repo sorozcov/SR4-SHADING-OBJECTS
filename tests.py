@@ -20,11 +20,15 @@ import numpy as np
 # print(np.dot(vectorA,vectorB))
 # print(math.dotProductVector(vectorA,vectorB))
 
-# #We draw our Trex
+#We draw our models and our models zbuffer
 mainGl3=Render(1400,1400)
 mainGl3.loadObjModel('trex.obj',700,200,4,4)
 mainGl3.glFinish('graphic1.bmp')
+mainGl3.glFinishZbuffer('graphic1zbuffer.bmp')
 
 mainGl3=Render(1400,1400)
 mainGl3.loadObjModel('rock.obj',700,700,3,3)
 mainGl3.glFinish('graphic2.bmp')
+mainGl3.glFinishZbuffer('graphic2zbuffer.bmp')
+
+
